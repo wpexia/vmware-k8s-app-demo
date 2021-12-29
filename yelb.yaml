@@ -1,5 +1,10 @@
 # Minor modification from http://www.it20.info/2017/07/yelb-yet-another-sample-app/ for demo purposes
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: yelb
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: redis-server
@@ -153,3 +158,23 @@ spec:
         image: mreferre/yelb-appserver:0.5
         ports:
         - containerPort: 4567
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: yelb-app-ingress
+  namespace: yelb
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: test-yelb.wpexia.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: yelb-ui
+                port:
+                  number: 80
